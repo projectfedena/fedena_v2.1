@@ -1,0 +1,70 @@
+<%-# Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License. -%>
+
+<% unless @particulars.empty? %>
+  <table id="listing" align="center" width="100%" cellpadding="1" cellspacing="1">
+    <tr class="tr-head">
+      <td>Sl no.</td>
+      <td>Particulars</td>
+      <td>Student Category</td>
+      <td>Admission No</td>
+      <td>Amount ( <%=currency  %> )</td>
+      <td>Created Date</td>
+      <td></td>
+    </tr>
+    <tr class="tr-blank"></tr>
+
+    <% @particulars.each_with_index do |fees,i| %>
+      <tr class="tr-<%= cycle("odd","even") %>">
+        <td class="col-1"><%= i+1 %></td>
+        <td class="col-4"><%= fees.name %></td>
+        <td class="col-3">
+          <%unless fees.student_category_id.nil?%>
+            <%= StudentCategory.find(fees.student_category_id).name%>
+          <% else %> - <% end %>
+        </td>
+        <td class="col-3">
+          <%unless fees.admission_no.nil?%>
+            <%  student =  Student.find_by_admission_no(fees.admission_no)%>
+            <%= student.nil? ? "N.A." : student.full_name %>
+          <% else %> - <% end %>
+        </td>
+        <td class="col-3"><%= fees.amount%></td>
+        <td class="col-3"><%= fees.created_at.strftime("%m-%d-%Y") %></td>
+        <td class="col-1">
+          <span class="small"> <%= link_to_remote 'Edit', :url => { :action => 'master_category_particulars_edit',:id => fees.id} %></span>
+          <%#  unless @finance_fee_category.check_fee_collection == false %>
+            <span class="small"> <%= link_to_remote 'Delete',:confirm=>"Delete the fee particular ?", :url => { :action => 'master_category_particulars_delete',:id => fees.id} %></span>
+          <%# else %>
+            <%#*<span class="small-strike">delete</span>%>
+          <%# end %>
+        </td>
+      </tr>
+    <% end %>
+
+
+  </table>
+  <%= will_paginate @particulars %>
+<% else %>
+  <table id="listing" align="center" width="100%" cellpadding="1" cellspacing="1">
+    <tr class="tr-head">
+      <td>No Particulars to display!</td>
+    </tr>
+  </table>
+
+<% end%>
+<%= link_to 'Back',{:action => 'master_fees'},:class=>'user_button' %>

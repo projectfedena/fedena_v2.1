@@ -1,0 +1,48 @@
+<%-# Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License. -%>
+
+<table id="listing" width="99%" align="center">
+  <tr class="tr-head">
+    <td >Asset</td>
+    <td>Created At</td>
+     <td></td>
+  </tr>
+
+  <% @assets.each do |a| %>
+    <% if a.is_inactive? %>
+      <tr class="inactive">
+        <td class="col-3"><%=link_to a.title+" ( inactive )" ,:action=>"each_asset_view",:id => a.id%></td>
+        <td class="col-3"><%=link_to a.created_at.strftime("%d-%m-%Y"),:action =>"each_asset_view",:id => a.id%></td>
+        <td class="col-1">
+          <%= link_to_remote 'Edit', :url => { :action => 'edit_asset', :id => a.id } %> |
+          <%= link_to_remote 'Delete', :url => { :action => 'delete_asset', :id => a.id } %>
+        </td>
+        
+      </tr>
+    <% else %>
+      <tr class="tr-<%= cycle('odd', 'even')%> ">
+        <td class="col-3"><%=link_to a.title ,:action=>"each_asset_view",:id => a.id%></td>
+        <td class="col-3"><%=link_to a.created_at.strftime("%d-%m-%Y"),:action =>"each_asset_view",:id => a.id%></td>
+        <td class="col-1">
+          <%= link_to_remote 'Edit', :url => { :action => 'edit_asset', :id => a.id } %> |
+          <%= link_to_remote 'Delete', :url => { :action => 'delete_asset', :id => a.id },:confirm=>'Are you sure?' %>
+        </td>
+
+      </tr>
+    <% end %>
+  <% end %>
+</table>

@@ -1,0 +1,45 @@
+<%-# Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License. -%>
+
+<div id="content-header">
+  <img src="/images/show_timetable.png" />
+  <h1>Timetable</h1>
+  <h3>Swap class</h3>
+  <div id="app-back-button">
+    <%= link_to_function image_tag("/images/buttons/back.png",:border => 0), "history.back()" %>
+  </div>
+</div>
+
+<div id="page-yield">
+  <div class="box">
+  <% form_remote_for :extra_class do |f| %>
+  <div class="label-field-pair">
+    <label for="student_date_of_birth">Select date</label>
+    <div class="text-input-bg">
+      <%= calendar_date_select_tag 'extra_class[date]',
+        Date.today , :year_range => 40.years.ago..0.years.ago %>
+    </div>
+  </div>
+  <div class="label-field-pair">
+    <label for="student_grade">Course & Batch</label>
+    <div class="text-input-bg"><%= select :extra_class, :batch_id, Batch.active.map {|b| [b.full_name, b.id]} %></div>
+  </div>
+
+   <%= submit_tag "► OK", :class=>'submit-button' %>
+  <% end %>
+</div></div>
+<div id="extra-class-form"></div>

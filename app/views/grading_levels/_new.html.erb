@@ -1,0 +1,45 @@
+<%-# Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License. -%>
+
+
+<div id="grading-levels-form">
+  <h4><%= @batch.full_name unless @batch.nil? %></h4>
+
+    <% form_remote_for @grading_level do |f| %>
+
+      <div id="form-errors"></div>
+
+    <% batch_id = (@batch.nil? ? nil : @batch.id) %>
+    <%= f.hidden_field :batch_id, :value => batch_id %>
+
+    <div class="label-field-pair">
+      <%= f.label :name %>
+      <div class="input-field"><%= f.text_field :name %></div>
+    </div>
+
+    <div class="label-field-pair">
+      <%= f.label :min_score, 'Min score for this grade' %>
+      <div class="input-field"><%= f.text_field :min_score %></div>
+    </div>
+
+  <%= f.submit '► Save', :class => 'submit_button' %>
+    
+
+
+
+  <% end %>
+</div>

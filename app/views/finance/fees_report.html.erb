@@ -1,0 +1,79 @@
+<%-# Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License. -%>
+
+<div id="content-header">
+  <img src="/images/show_finance.png" />
+  <h1>Finance Transactions</h1>
+  <h3>Fees Report</h3>
+  <div id="app-back-button">
+    <%= link_to_function image_tag("/images/buttons/back.png",:border => 0), "history.back()" %>
+  </div>
+</div>
+
+<div id="page-yield">
+  <% total =0 %>
+  <% amount=0%>
+
+  <b style="margin-left:200px;"> FEES TRANSACTION REPORT </b>
+  <div id="fees-table">
+    <div class="fees-th">
+      <div class="fees-table-head-desc">Description</div>
+      <div class="fees-table-expenses">Amount</div>
+
+    </div>
+    <% @batchs.each do |c| %>
+
+      <% sids = c.students(&:id) %>
+  <%# s = FinanceTransaction.find_all_by_student_id(sids, :conditions => ["created_at >= '#{@start_date}' and created_at <= '#{@end_date}'and category_id ='#{3}'"]) %>
+      <% dates = c.fee_collection_dates%>
+      <% dates.each do |d| %>
+        <% amount = 0 %>
+        <% sids.each do |s| %>
+          <% trans = FinanceFee.find_by_student_id_and_fee_collection_id(s.id, d.id) %>
+      <%# s.each do |t| %>
+          <% unless trans.nil? %>
+            <%  unless trans.transaction_id.nil? %>
+              <% collection = FinanceTransaction.find(:all,:conditions=>"FIND_IN_SET(id,\"#{trans.transaction_id}\") and transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}' and category_id ='#{3}' ") %>
+          <%# collection = FinanceTransaction.find_by_id(trans.transaction_id, :conditions => ["created_at >= '#{@start_date}' and created_at <= '#{@end_date}'and category_id ='#{3}'"]) %>
+              <% collection.each do |collection| %>
+                <% amount += collection.amount %>
+              <% end %>
+            <% end %>
+          <% end %>
+
+
+        <% end %>
+        <% unless amount==0 %>
+          <div class="list<%=cycle('odd', 'even')%>">
+            <div class="fees-table-description"><%= link_to c.full_name+" (  "+FinanceFeeCollection.shorten_string(d.name,27)+" ) ", :action => 'batch_fees_report',:id =>d.id,:start => @start_date,:end => @end_date %></div>
+            <div class="fees-table-income"> <%= amount %> </div>
+          </div>
+        <% end %>
+        <% total += amount %>
+      <% end %>
+      <%amount =0 %>
+
+    <% end %>
+
+    <br/>
+    <div class="fees-th">
+      <div class="fees-table-description">Total Fees </div>
+      <div class="fees-table-expenses"><%= total %></div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<%-# Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License. -%>
+
+
+
+<% week =[] %>
+<% @weekdays.each do |dr| %>
+  <% week.push dr.weekday %>
+
+<% end %>
+<% form_for(:weekday, :url => {:action=> 'create'}) do |f| %>
+  <ul id="category-list">
+    <% batch_id = (@b.nil? ? nil : @b.id) %>
+    <%= f.hidden_field :batch_id, :value => batch_id %>
+    <% @days.each do |w| %>
+      <li class="list<%=cycle('odd','even') %>">
+        <% q = w.to_i %>
+        <div class="category-name"><%= @day[q] %></div>
+        <div class="category-edit"><%= check_box_tag "weekdays[]", w,  week.include?(w)%></div>
+      </li>
+    <% end %>
+
+  </ul>
+  <%= submit_tag "► Save", :confirm=>"This will delete all timetable entries and Attendance entries for the weekdays, Proceed with changing weekdays ?",:class=>'submit_button' %>
+<% end %>
+

@@ -1,0 +1,43 @@
+<%-# Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License. -%>
+
+<label class="head_label">Attendance for <span><%= @student.first_name %></span></label>
+
+<div id="ajax-edit">
+  <br></br>
+  <% form_remote_for @absentee do |f| %>
+   <div id="form-errors"></div>
+    <%= f.hidden_field :student_id, :value => @student.id %>
+    <%= f.hidden_field :period_table_entry_id, :value => @period_entry_id %>
+    <div class="label-field-pair">
+      <label for="reason"> Reason for absence</label>
+      <div class="text-input-bg"><%= f.text_field :reason %></div>
+    </div>
+    <% if @config.config_value == 'Daily' %>
+      <div class="label-checkbox-pair">
+        <label><%= f.check_box :forenoon, :checked => true %>Forenoon</label>
+
+      </div>
+      <div class="label-checkbox-pair">
+        <label><%= f.check_box :afternoon, :checked => true %>Afternoon</label>
+      </div>
+    <% end %>
+  <div class="extender"></div>
+    <%= f.submit '► Add', :class => 'submit-button', :confirm => 'Are you sure?' %>
+  <% end %>
+  
+</div>

@@ -1,0 +1,96 @@
+<%-# Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License. -%>
+
+<div id="content-header">
+  <img src="/images/admission/admission_page_logo.jpg" />
+  <h1>Admission</h1>
+  <h3>Previous Details Edit</h3>
+  <div id="app-back-button">
+    <%= link_to_function image_tag("/images/buttons/back.png",:border => 0), "history.back()" %>
+  </div>
+</div>
+
+<div id="inner-tab-menu">
+  <ul>
+    <li><%= link_to 'Profile', :action=>:profile, :id=>@student.id %> </li>
+  </ul>
+</div>
+
+<div id="page-yield">
+
+  <% unless flash[:notice].nil? %>
+    <p class="flash-msg"> <%= flash[:notice] %> </p>
+  <% end %>
+  <%= error_messages_for 'previous_data' %>
+
+  <% form_for :previous_data do |a| %>
+  <%#= error_messages_for 'employee_bank_details' %>
+
+    <span class="span-sub-heading">Previous Educational Details</span>
+    <hr class="sub-heading"></hr>
+    <div id="form-contents">
+      <%= a.hidden_field :student_id, :value => @student.id %>
+      <div class="label-field-pair">
+        <label>Institution name</label>
+        <div class="text-input-bg"><%= a.text_field :institution %></div>
+        <div class="extender"></div>
+      </div>
+      <div class="label-field-pair">
+        <label>Course</label>
+        <div class="text-input-bg"><%= a.text_field :course %></div>
+        <div class="extender"></div>
+      </div>
+      <div class="label-field-pair">
+        <label>Year</label>
+        <div class="text-input-bg"><%= a.text_field :year %></div>
+        <div class="extender"></div>
+      </div>
+      <div class="label-field-pair">
+        <label>Total mark</label>
+        <div class="text-input-bg"><%= a.text_field :total_mark %></div>
+        <div class="extender"></div>
+      </div>
+      <div class="save-proceed-button">
+
+        <%= submit_tag "► Update" %>
+
+      </div>
+    </div>
+  <% end %>
+  <div class="ajax-subject">
+    <ul id="added-subjects">
+      <%  unless @previous_subject.nil? %>
+        <% @previous_subject.each  do |p| %>
+
+          <li><div class="name"><%= p.subject %></div>
+            <div class="val"><span>:</span><%= p.mark %></div>
+            <div class="delete"><%= link_to_remote image_tag("/images/buttons/delete-new.png", :border => 0),
+                :url => {:action => "delete_previous_subject", :id => p.id},
+
+                :update => "added_subjects"%></div></li>
+
+        <% end %>
+      <% end %>
+    </ul>
+    <%= link_to_remote "Add subject", :url=>{:controller=>"student",:action=>"previous_subject", :id=>@student.id}%>
+    <div id="subject">
+
+    </div>
+  </div>
+</div>
+
+
