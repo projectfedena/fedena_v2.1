@@ -211,13 +211,10 @@ class EmployeeAttendanceController < ApplicationController
               end
               c.update_attributes(:leave_taken => leave_taken,:leave_count => available_leave, :reset_date => Date.today)
             end
-          else
-            available_leave = default_leave_count.to_f
-            leave_taken = 0
-            unless attendance.blank?
-              attendance.each do |a|
-                if a.is_half_day
-                  leave_taken += (0.5).to_f
+        end
+        flash[:notice]="Department Wise Leave Reset Successfull"
+        redirect_to :controller=>"employee_attendance", :action => "employee_leave_reset_by_department"
+    end
 
                 else
                   leave_taken += (1).to_f
@@ -309,18 +306,21 @@ class EmployeeAttendanceController < ApplicationController
                 end
               end
             end
-            e.update_attributes(:leave_taken => leave_taken,:leave_count => available_leave, :reset_date => Date.today)
-          else
-            available_leave = default_leave_count.to_f
-            leave_taken = 0
-            unless attendance.blank?
-              attendance.each do |a|
-                if a.is_half_day
-                  leave_taken += (0.5).to_f
-                                    
-                else
-                  leave_taken += (1).to_f
-                                    
+        end
+        render :update do |page|
+            flash.now[:notice]="Leave Reset Successfull"
+            page.replace_html "list", :partial => 'employee_reset_sucess'
+        end
+    end
+
+
+    def register
+        @departments = EmployeeDepartment.find(:all, :conditions=>"status = true", :order=> "name ASC")
+        if request.post?
+            unless params[:employee_attendance].nil?
+                params[:employee_attendance].each_pair do |emp, att|
+                    @employee_attendance = EmployeeAttendance.create(:attendance_date => params[:date],
+                        :employees_id => emp, :employee_leave_types_id=> att) unless att == ""
                 end
               end
             end
