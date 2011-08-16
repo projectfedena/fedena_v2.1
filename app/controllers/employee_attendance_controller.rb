@@ -230,7 +230,7 @@ class EmployeeAttendanceController < ApplicationController
 
             end
         end
-        flash[:notice]="Department Wise Leave Reset Sucessfull"
+        flash[:notice]="Department Wise Leave Reset Successfull"
         redirect_to :controller=>"employee_attendance", :action => "employee_leave_reset_by_department"
     end
 
@@ -339,7 +339,7 @@ class EmployeeAttendanceController < ApplicationController
             end
         end
         render :update do |page|
-            flash.now[:notice]="Leave Reset Sucessfull"
+            flash.now[:notice]="Leave Reset Successfull"
             page.replace_html "list", :partial => 'employee_reset_sucess'
         end
     end

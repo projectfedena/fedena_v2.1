@@ -147,7 +147,7 @@ class FinanceController < ApplicationController
       auto_transactions.each { |a| a.destroy } unless auto_transactions.nil?
     end
     @transaction.destroy
-    flash[:notice]="Finance Transaction Sucessfully Deleted"
+    flash[:notice]="Finance Transaction Successfully Deleted"
     if income
       redirect_to :action=>'income_list'
     else
