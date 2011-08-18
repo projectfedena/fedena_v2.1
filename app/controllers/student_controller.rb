@@ -500,8 +500,7 @@ class StudentController < ApplicationController
     @immediate_contact = Guardian.find(@student.immediate_contact_id) \
       unless @student.immediate_contact_id.nil? or @student.immediate_contact_id == ''
         
-    render :pdf=>'profile_pdf',
-      :page_size=> 'Legal'
+    render :pdf=>'profile_pdf'
   end
 
   def show_previous_details
