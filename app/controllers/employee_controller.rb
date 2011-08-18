@@ -1597,9 +1597,8 @@ class EmployeeController < ApplicationController
 
   def delete
     employee = Employee.find(params[:id])
-    user = User.destroy_all(:username => employee.employee_number) #unless user.nil?
     employee_subject=EmployeesSubject.destroy_all(:employee_id=>employee.id)
-    Employee.destroy(params[:id])
+    employee.destroy
     flash[:notice] = "All records have been deleted for employee with employee no. #{employee.employee_number}."
     redirect_to :controller => 'user', :action => 'dashboard'
   end

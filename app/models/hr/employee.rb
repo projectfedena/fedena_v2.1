@@ -22,7 +22,7 @@ class Employee < ActiveRecord::Base
   belongs_to  :employee_grade
   belongs_to  :employee_department
   belongs_to  :nationality, :class_name => 'Country'
-  belongs_to  :user, :dependent=>:destroy
+  belongs_to  :user, :dependent=>:destroy,:autosave=>true
   
   has_many :employees_subjects
   has_many :subjects ,:through => :employees_subjects
