@@ -1605,15 +1605,10 @@ class EmployeeController < ApplicationController
 
   def delete
     employee = Employee.find(params[:id])
-    unless employee.has_dependency
-      employee_subject=EmployeesSubject.destroy_all(:employee_id=>employee.id)
-      employee.destroy
-      flash[:notice] = "#{t('flash46')}#{employee.employee_number}."
-      redirect_to :controller => 'user', :action => 'dashboard'
-    else
-      flash[:notice] = "#{t('flash44')}"
-      redirect_to  :action => 'remove' ,:id=>employee.id
-    end
+    employee_subject=EmployeesSubject.destroy_all(:employee_id=>employee.id)
+    employee.destroy
+    flash[:notice] = "All records have been deleted for employee with employee no. #{employee.employee_number}."
+    redirect_to :controller => 'user', :action => 'dashboard'
   end
 
   def advanced_search_pdf
