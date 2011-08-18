@@ -21,7 +21,7 @@ class Student < ActiveRecord::Base
   belongs_to :batch
   belongs_to :student_category
   belongs_to :nationality, :class_name => 'Country'
-  belongs_to :user,:dependent=>:destroy
+  belongs_to :user,:dependent=>:destroy,:autosave=>true
 
   has_one    :immediate_contact
   has_one    :student_previous_data
