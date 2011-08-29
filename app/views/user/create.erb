@@ -18,9 +18,9 @@
 #under the License. -%>
 
 <div id="content-header">
-  <%= image_tag("/images/user_profile/user_profile_logo.jpg") %>
-  <h1><%= t('create_user') %></h1>
-  <h3><%= t('make_new_admin_user') %></h3>
+  <img src="/images/user_profile/user_profile_logo.jpg" />
+  <h1>Create User</h1>
+  <h3>Make new admin user</h3>
   <div id="app-back-button">
     <%= link_to_function image_tag("/images/buttons/back.png",:border => 0), "history.back()" %>
   </div>
@@ -36,7 +36,7 @@
 
     <div id="create_user_form">
 
-      <div id="necessary-field-notification"><%= t('legend1') %> <span class="necessary-field">*</span> <%= t('legend2') %>  (<%= t('only_admin_user_can_created') %>)</div>
+      <div id="necessary-field-notification"> Fields marked with <span class="necessary-field">*</span> must be filled. (Only Admin User can be created)</div>
 
       <div class="label-field-pair">
         <label for="user_username"><%= t('username') %><span class="necessary-field">*</span></label>

@@ -135,16 +135,17 @@ class UserController < ApplicationController
   def create
     @config = Configuration.available_modules
 
-    @user = User.new(params[:user])
-    if request.post?
+        @user = User.new(params[:user])
+        if request.post?
           
-      if @user.save
-        flash[:notice] = "#{t('flash17')}"
-        redirect_to :controller => 'user', :action => 'edit', :id => @user.username
-      else
-        flash[:notice] = "#{t('flash16')}"
-      end
+                 if @user.save
+                    flash[:notice] = 'User account created!'
+                    redirect_to :controller => 'user', :action => 'edit', :id => @user.username
+                else
+                    flash[:notice] = 'User account not created!'
+                end
            
+        end
     end
   end
 
