@@ -136,25 +136,14 @@ class UserController < ApplicationController
 
         @user = User.new(params[:user])
         if request.post?
-      
-            if @config.include?('HR')
-                @employee = Employee.new
-                @employee.first_name =  @user.first_name
-                @employee.last_name =  @user.last_name
-                @employee.employee_number =  @user.username
-                @employee.employee_category_id =  1
-                @employee.employee_position_id =  1
-                @employee.employee_department_id =  1
-                @employee.employee_grade_id =  1
-                @employee.date_of_birth =  Date.today - 20.year
-                @employee.joining_date =  Date.today - 5.year
-                if @employee.save and @user.save
+          
+                 if @user.save
                     flash[:notice] = 'User account created!'
                     redirect_to :controller => 'user', :action => 'edit', :id => @user.username
                 else
                     flash[:notice] = 'User account not created!'
                 end
-            end
+           
         end
     end
 

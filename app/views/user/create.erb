@@ -20,7 +20,7 @@
 <div id="content-header">
   <img src="/images/user_profile/user_profile_logo.jpg" />
   <h1>Create User</h1>
-  <h3>Make new user</h3>
+  <h3>Make new admin user</h3>
   <div id="app-back-button">
     <%= link_to_function image_tag("/images/buttons/back.png",:border => 0), "history.back()" %>
   </div>
@@ -36,7 +36,7 @@
 
     <div id="create_user_form">
 
-      <div id="necessary-field-notification"> Fields marked with <span class="necessary-field">*</span> must be filled.</div>
+      <div id="necessary-field-notification"> Fields marked with <span class="necessary-field">*</span> must be filled. (Only Admin User can be created)</div>
 
       <div class="label-field-pair">
         <label for="user_username">Username <span class="necessary-field">*</span></label>
@@ -63,12 +63,7 @@
         <div class="text-input-bg"><%= f.text_field :email %></div>
       </div>
 
-      <div class="label-field-pair">
-        <label for="user_user_role">Role</label>
-        <div class="text-input-bg"> <%= select :user, :role,
-            ['Admin', 'Employee'] %> </div>
-      </div>
-
+      <%= f.hidden_field :role, :value=>'Admin' %>
       <div class="extender"></div>
 
       <%= submit_tag "", :value => "► Create", :class => "user_submit_button" %>
