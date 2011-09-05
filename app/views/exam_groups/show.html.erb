@@ -67,7 +67,7 @@
             :style =>"display: none;" ) %></span></h4></div>
     <% @employee_subjects=[] %>
     <% @employee_subjects= @current_user.employee_record.subjects.map { |n| n.id} if @current_user.employee?  %>
-    <% privilege = Privilege.find_by_name("EnterResults") %>
+    <% privilege = Privilege.find_by_id(2) %>
     <% unless @exam_group.exam_type == 'Grades' %>
       <table id="listing">
         <tr class="tr-head">
