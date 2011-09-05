@@ -29,7 +29,7 @@ class ExamGroupsController < ApplicationController
   def index
     @exam_groups = @batch.exam_groups
     if @current_user.employee?
-      @employee_subjects= @current_user.employee_record.subjects.map { |n| n.subject_id}
+      @employee_subjects= @current_user.employee_record.subjects.map { |n| n.id}
       if @employee_subjects.empty? and !@current_user.privileges.map{|p| p.id}.include?(1) and !@current_user.privileges.map{|p| p.id}.include?(2)
         flash[:notice] = "Sorry, you are not allowed to access that page."
         redirect_to :controller => 'user', :action => 'dashboard'
@@ -69,7 +69,7 @@ class ExamGroupsController < ApplicationController
   def destroy
     @exam_group = ExamGroup.find(params[:id], :include => :exams)
     if @current_user.employee?
-      @employee_subjects= @current_user.employee_record.subjects.map { |n| n.subject_id}
+      @employee_subjects= @current_user.employee_record.subjects.map { |n| n.id}
       if @employee_subjects.empty? and !@current_user.privileges.map{|p| p.id}.include?(1) and !@current_user.privileges.map{|p| p.id}.include?(2)
         flash[:notice] = "Sorry, you are not allowed to access that page."
         redirect_to :controller => 'user', :action => 'dashboard'
@@ -82,7 +82,7 @@ class ExamGroupsController < ApplicationController
   def show
     @exam_group = ExamGroup.find(params[:id], :include => :exams)
     if @current_user.employee?
-      @employee_subjects= @current_user.employee_record.subjects.map { |n| n.subject_id}
+      @employee_subjects= @current_user.employee_record.subjects.map { |n| n.id}
       if @employee_subjects.empty? and !@current_user.privileges.map{|p| p.id}.include?(1) and !@current_user.privileges.map{|p| p.id}.include?(2)
         flash[:notice] = "Sorry, you are not allowed to access that page."
         redirect_to :controller => 'user', :action => 'dashboard'

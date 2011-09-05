@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
  
   def only_assigned_employee_allowed
     if @current_user.employee?
-      @employee_subjects= @current_user.employee_record.subjects.map { |n| n.subject_id}
+      @employee_subjects= @current_user.employee_record.subjects
       privilege = @current_user.privileges.map{|p| p.id}
       if @employee_subjects.empty? and !privilege.include?(8) and !privilege.include?(16)
           flash[:notice] = "Sorry, you are not allowed to access that page."
@@ -55,7 +55,7 @@ class ApplicationController < ActionController::Base
 
   def restrict_employees_from_exam
     if @current_user.employee?
-      @employee_subjects= @current_user.employee_record.subjects.map { |n| n.subject_id}
+      @employee_subjects= @current_user.employee_record.subjects
       if @employee_subjects.empty? and !@current_user.privileges.map{|p| p.id}.include?(1) and !@current_user.privileges.map{|p| p.id}.include?(2) and !@current_user.privileges.map{|p| p.id}.include?(3)
         flash[:notice] = "Sorry, you are not allowed to access that page."
         redirect_to :controller => 'user', :action => 'dashboard'
@@ -67,7 +67,7 @@ class ApplicationController < ActionController::Base
 
   def block_unauthorised_entry
     if @current_user.employee?
-      @employee_subjects= @current_user.employee_record.subjects.map { |n| n.subject_id}
+      @employee_subjects= @current_user.employee_record.subjects
       if @employee_subjects.empty? and !@current_user.privileges.map{|p| p.id}.include?(1)
         flash[:notice] = "Sorry, you are not allowed to access that page."
         redirect_to :controller => 'user', :action => 'dashboard'

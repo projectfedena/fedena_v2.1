@@ -59,7 +59,7 @@
             :id => "loader",
             :style =>"display: none;" ) %></span></h4></div>
     <% @employee_subjects=[] %>
-    <% @employee_subjects= @current_user.employee_record.subjects.map { |n| n.subject_id} if @current_user.employee?  %>
+    <% @employee_subjects= @current_user.employee_record.subjects.map { |n| n.id} if @current_user.employee?  %>
     <% privilege = Privilege.find_by_id(2) %>
     <% unless @exam_group.exam_type == 'Grades' %>
       <table id="listing">

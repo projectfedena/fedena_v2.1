@@ -78,7 +78,7 @@ class ExamsController < ApplicationController
 
   def show
     @employee_subjects=[]
-    @employee_subjects= @current_user.employee_record.subjects.map { |n| n.subject_id} if @current_user.employee?
+    @employee_subjects= @current_user.employee_record.subjects.map { |n| n.id} if @current_user.employee?
     @exam = Exam.find params[:id], :include => :exam_group
     unless @employee_subjects.include?("#{@exam.subject_id}") or @current_user.admin? or @current_user.privileges.map{|p| p.id}.include?(1) or @current_user.privileges.map{|p| p.id}.include?(2)
       flash[:notice] = 'Access Denied.'
