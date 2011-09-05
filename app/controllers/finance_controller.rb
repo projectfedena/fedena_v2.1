@@ -968,7 +968,7 @@ class FinanceController < ApplicationController
             err = err + "#{a}#{t('does_not_exist')}<br />"
           end
         end
-        @finance_fee_particulars.errors.add(:admission_no," #{t('invalid')} : <br />" + err) if @error==true
+        @finance_fee_particulars.errors.add(:admission_no," invalid : <br />" + err) if @error==true
         @finance_fee_particulars_list = FeeCollectionParticular.find(:all,:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}'"])  unless @error== true
       else
         @error = true
@@ -1039,8 +1039,7 @@ class FinanceController < ApplicationController
         @particulars = FeeCollectionParticular.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}' "])
         page.replace_html 'form-errors', :text => ''
         page << "Modalbox.hide();"
-        page.replace_html 'particulars', :partial => 'additional_particulars_list'
-        page.replace_html 'flash_box', :text => "<p class='flash-msg'>#{t('flash_msg32')}</p>"
+        page.replace_html 'particular-box', :partial => 'additional_particulars_list'
       else
         page.replace_html 'form-errors', :partial => 'class_timings/errors', :object => @finance_fee_particulars
         page.visual_effect(:highlight, 'form-errors')
@@ -1054,10 +1053,6 @@ class FinanceController < ApplicationController
     @collection_date = @finance_fee_particulars.finance_fee_collection
     @additional_category =@collection_date.fee_category
     @particulars = FeeCollectionParticular.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}' "])
-    render :update do |page|
-      page.replace_html 'flash_box', :text => "<p class='flash-msg'>#{t('particulars_deleted_successfully')}</p>"
-      page.replace_html 'particulars', :partial => 'additional_particulars_list'
-    end
   end
 
   def fee_collection_batch_update
