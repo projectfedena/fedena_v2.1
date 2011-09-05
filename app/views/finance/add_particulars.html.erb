@@ -29,6 +29,8 @@
   <% unless flash[:notice].nil? %><p class="flash-msg"><%= flash[:notice] %></p><% end %>
   <div id="message"></div>
   <br/>
+
+  <div id="particular-box">
  <div class="name">Category Name</div><div class="val"><span>:</span><%= @additional_category.name %></div>
  <div class="name">Description</div><div class="val"><span>:</span><%= @additional_category.description %></div>
 
@@ -52,7 +54,7 @@
   
   <div id="particulars"><%= render :partial => 'fees_particulars_list' %></div>
   
-
+  </div>
   <div id="modal-box" style="display:none;"></div>
   
   

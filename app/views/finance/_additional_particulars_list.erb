@@ -67,10 +67,11 @@
         <td class="col-1">
           <%  unless @additional_category.check_fee_collection_for_additional_fees == false %>
             <span class="small"> <%= link_to_remote 'Delete', :confirm=>"Delete this particular ?",:url => { :action => 'add_particulars_delete',:id => fees.id} %></span>
+            <span class="small"> <%= link_to_remote 'Edit', :url => { :action => 'add_particulars_edit',:id => fees.id} %></span>
           <% else %>
             <span class="small-strike">delete</span>
+            <span class="small-strike">Edit</span>
           <% end %>
-          <span class="small"> <%= link_to_remote 'Edit', :url => { :action => 'add_particulars_edit',:id => fees.id} %></span>
         </td>
       </tr>
     <% end %>

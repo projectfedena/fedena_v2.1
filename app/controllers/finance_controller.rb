@@ -855,15 +855,15 @@ class FinanceController < ApplicationController
     @collection_date = FinanceFeeCollection.find(params[:id])
     @additional_category = FinanceFeeCategory.find(@collection_date.fee_category_id)
     @student_categories = StudentCategory.active
-    @finance_fee_particulars = FinanceFeeParticulars.new
-    @finance_fee_particulars_list = FinanceFeeParticulars.find(:all,:conditions => ["is_deleted = '#{false}' and finance_fee_category_id = '#{@additional_category.id}'"])
+    @finance_fee_particulars = FeeCollectionParticular.new
+    @finance_fee_particulars_list = FeeCollectionParticular.find(:all,:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}'"])
   end
 
   def add_particulars_new
     @collection_date = FinanceFeeCollection.find(params[:id])
     @additional_category = FinanceFeeCategory.find(@collection_date.fee_category_id)
     @student_categories = StudentCategory.active
-    @finance_fee_particulars = FinanceFeeParticulars.new
+    @finance_fee_particulars = FeeCollectionParticular.new
   end
 
   def add_particulars_create
@@ -878,8 +878,8 @@ class FinanceController < ApplicationController
         err = ""
         admission_no.each do |a|
           posted_params["admission_no"] = a.to_s
-          @finance_fee_particulars = FinanceFeeParticulars.new(posted_params)
-          @finance_fee_particulars.finance_fee_category_id = @additional_category.id
+          @finance_fee_particulars = FeeCollectionParticular.new(posted_params)
+          @finance_fee_particulars.finance_fee_collection_id = @collection_date.id
           s = Student.find_by_admission_no(a)
           unless s.nil?
             if (s.batch_id == @collection_date.batch_id) or (@collection_date.batch_id.nil?)
@@ -896,20 +896,20 @@ class FinanceController < ApplicationController
           end
         end
         @finance_fee_particulars.errors.add(:admission_no," invalid : <br />" + err) if @error==true
-        @finance_fee_particulars_list = FinanceFeeParticulars.find(:all,:conditions => ["is_deleted = '#{false}' and finance_fee_category_id = '#{@additional_category.id}'"])  unless @error== true
+        @finance_fee_particulars_list = FeeCollectionParticular.find(:all,:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}'"])  unless @error== true
       else
         @error = true
-        @finance_fee_particulars = FinanceFeeParticulars.new(params[:finance_fee_particulars])
+        @finance_fee_particulars = FeeCollectionParticular.new(params[:finance_fee_particulars])
         @finance_fee_particulars.valid?
         @finance_fee_particulars.errors.add(:admission_no," is blank")
       end
     else
-      @finance_fee_particulars = FinanceFeeParticulars.new(params[:finance_fee_particulars])
-      @finance_fee_particulars.finance_fee_category_id = @additional_category.id
+      @finance_fee_particulars = FeeCollectionParticular.new(params[:finance_fee_particulars])
+      @finance_fee_particulars.finance_fee_collection_id = @collection_date.id
       unless @finance_fee_particulars.save
         @error = true
       else
-        @finance_fee_particulars_list = FinanceFeeParticulars.find(:all,:conditions => ["is_deleted = '#{false}' and finance_fee_category_id = '#{@additional_category.id}'"])
+        @finance_fee_particulars_list = FeeCollectionParticular.find(:all,:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}'"])
       end
 
     end
@@ -917,7 +917,7 @@ class FinanceController < ApplicationController
 
   def student_or_student_category
     @student_categories = StudentCategory.active
-
+    
     select_value = params[:select_value]
 
     if select_value == "category"
@@ -937,10 +937,7 @@ class FinanceController < ApplicationController
 
   def additional_fees_list
     @batchs=Batch.active
-
     #@additional_categories = FinanceFeeCategory.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and is_master = '#{false}'"])
-
-     
   end
 
   def show_additional_fees_list
@@ -953,23 +950,23 @@ class FinanceController < ApplicationController
   def additional_particulars
     @additional_category = FinanceFeeCategory.find(params[:id])
     @collection_date = FinanceFeeCollection.find_by_fee_category_id(@additional_category.id)
-    @particulars = FinanceFeeParticulars.find(:all,:conditions => ["is_deleted = '#{false}' and finance_fee_category_id = '#{@additional_category.id}' "])
+    @particulars = FeeCollectionParticular.find(:all,:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}' "])
   end
 
   def add_particulars_edit
-    @finance_fee_particulars = FinanceFeeParticulars.find(params[:id])
+    @finance_fee_particulars = FeeCollectionParticular.find(params[:id])
   end
   
   def add_particulars_update
-    @finance_fee_particulars = FinanceFeeParticulars.find(params[:id])
+    @finance_fee_particulars = FeeCollectionParticular.find(params[:id])
     render :update do |page|
       if @finance_fee_particulars.update_attributes(params[:finance_fee_particulars])
-        @additional_category = FinanceFeeCategory.find @finance_fee_particulars.finance_fee_category_id
-        @collection_date = FinanceFeeCollection.find_by_fee_category_id(@additional_category.id)
-        @particulars = FinanceFeeParticulars.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and finance_fee_category_id = '#{@finance_fee_particulars.finance_fee_category_id}' "])
+        @collection_date = @finance_fee_particulars.finance_fee_collection
+        @additional_category =@collection_date.fee_category
+        @particulars = FeeCollectionParticular.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}' "])
         page.replace_html 'form-errors', :text => ''
         page << "Modalbox.hide();"
-        page.replace_html 'particulars', :partial => 'additional_particulars_list'
+        page.replace_html 'particular-box', :partial => 'additional_particulars_list'
       else
         page.replace_html 'form-errors', :partial => 'class_timings/errors', :object => @finance_fee_particulars
         page.visual_effect(:highlight, 'form-errors')
@@ -978,10 +975,11 @@ class FinanceController < ApplicationController
   end
 
   def add_particulars_delete
-    @finance_fee_particulars = FinanceFeeParticulars.find(params[:id])
+    @finance_fee_particulars = FeeCollectionParticular.find(params[:id])
     @finance_fee_particulars.update_attributes(:is_deleted => true)
-    @additional_category = FinanceFeeCategory.find(@finance_fee_particulars.finance_fee_category_id)
-    @particulars = FinanceFeeParticulars.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and finance_fee_category_id = '#{@additional_category.id}' "])
+    @collection_date = @finance_fee_particulars.finance_fee_collection
+    @additional_category =@collection_date.fee_category
+    @particulars = FeeCollectionParticular.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}' "])
   end
 
   def fee_collection_batch_update
