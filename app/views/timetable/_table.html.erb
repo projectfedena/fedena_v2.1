@@ -37,8 +37,8 @@
     <% weekday = Weekday.find_by_batch_id_and_weekday(b.id, @today.wday) %>
     <% weekday = Weekday.find_by_batch_id_and_weekday(nil, @today.wday) if weekday.blank? %>
 
-      <% @timetable = TimetableEntry.find_all_by_batch_id_and_weekday_id(b.id, weekday.id) %>
-      <% unless @timetable.empty? %>
+      <% @timetable = TimetableEntry.find_all_by_batch_id_and_weekday_id(b.id, weekday.id) unless weekday.blank? %>
+      <% unless @timetable.blank? %>
     <table border="0" align="center" width="100%" id="timing"  cellspacing="0">
       <tr>
         <td class="head">
