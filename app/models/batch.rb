@@ -41,8 +41,8 @@ class Batch < ActiveRecord::Base
 
   validates_presence_of :name, :start_date, :end_date
 
-  named_scope :active,{ :conditions => { :is_deleted => false, :is_active => true },:joins=>:course,:select=>"*,CONCAT(courses.code,'-',batches.name) as course_full_name",:order=>"course_full_name"}
-  named_scope :deleted,{:conditions => { :is_deleted => true },:joins=>:course,:select=>"*,CONCAT(courses.code,'-',batches.name) as course_full_name",:order=>"course_full_name"}
+  named_scope :active,{ :conditions => { :is_deleted => false, :is_active => true },:joins=>:course,:select=>"`batches`.*,CONCAT(courses.code,'-',batches.name) as course_full_name",:order=>"course_full_name"}
+  named_scope :deleted,{:conditions => { :is_deleted => true },:joins=>:course,:select=>"`batches`.*,CONCAT(courses.code,'-',batches.name) as course_full_name",:order=>"course_full_name"}
 
   def validate
     errors.add(:start_date, "#{t('should_be_before_end_date')}.") \
