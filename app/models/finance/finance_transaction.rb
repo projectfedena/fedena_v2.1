@@ -42,22 +42,15 @@ class FinanceTransaction < ActiveRecord::Base
   def self.grand_total(start_date,end_date)
     fee_id = FinanceTransactionCategory.find_by_name("Fee").id
     donation_id = FinanceTransactionCategory.find_by_name("Donation").id
-    cat_names = ['Fee','Salary','Donation']
-    plugin_name = []
-    FedenaPlugin::FINANCE_CATEGORY.each do |category|
-      cat_names << "#{category[:category_name]}"
-      plugin_name << "#{category[:category_name]}"
-    end
-    fixed_categories = FinanceTransactionCategory.find(:all,:conditions=>{:name=>cat_names})
-    fixed_cat_ids = fixed_categories.collect(&:id)
-    fixed_transactions = FinanceTransaction.find(:all ,
-      :conditions => ["transaction_date >= '#{start_date}' and transaction_date <= '#{end_date}'and category_id IN (#{fixed_cat_ids.join(",")})"])
+    cat_names = ['Fee','Salary','Donation','Library','Hostel','Transport']
+    fixed_cat_ids = FinanceTransactionCategory.find(:all,:conditions=>{:name=>cat_names}).collect(&:id)
     other_transactions = FinanceTransaction.find(:all ,
       :conditions => ["transaction_date >= '#{start_date}' and transaction_date <= '#{end_date}'and category_id NOT IN (#{fixed_cat_ids.join(",")})"])
-    #    transactions_fees = FinanceTransaction.find(:all,
-    #      :conditions => ["transaction_date >= '#{start_date}' and transaction_date <= '#{end_date}'and category_id ='#{fee_id}'"])
-    #    donations = FinanceTransaction.find(:all,
-    #      :conditions => ["transaction_date >= '#{start_date}' and transaction_date <= '#{end_date}'and category_id ='#{donation_id}'"])
+    transactions_fees = FinanceTransaction.find(:all,
+      :conditions => ["transaction_date >= '#{start_date}' and transaction_date <= '#{end_date}'and category_id ='#{fee_id}'"])
+    employees = Employee.find(:all)
+    donations = FinanceTransaction.find(:all,
+      :conditions => ["transaction_date >= '#{start_date}' and transaction_date <= '#{end_date}'and category_id ='#{donation_id}'"])
     trigger = FinanceTransactionTrigger.find(:all)
     hr = Configuration.find_by_config_value("HR")
     income_total = 0
