@@ -19,14 +19,14 @@
 class FinanceController < ApplicationController
   before_filter :login_required,:configuration_settings_for_finance
   filter_access_to :all
-
+  
   def index
     @hr = Configuration.find_by_config_value("HR")
   end
   
   def automatic_transactions
     @triggers = FinanceTransactionTrigger.all
-    @categories = FinanceTransactionCategory.find(:all ,:conditions => ["id != 1 and id != 3 and is_income=1 and deleted=0 "])
+    @categories = FinanceTransactionCategory.find(:all ,:conditions => ["name NOT IN ('Fee','Salary','Transport','Library','Hostel') and is_income=1 and deleted=0 "])
   end
   
   def donation
@@ -91,7 +91,7 @@ class FinanceController < ApplicationController
   def expense_edit
     @transaction = FinanceTransaction.find(params[:id])
     @transaction.user_id = @current_user.id
-    @categories = FinanceTransactionCategory.all(:conditions =>'id != 1 and is_income = false' )
+    @categories = FinanceTransactionCategory.all(:conditions =>"name != 'Salary' and is_income = false" )
     if request.post? and @transaction.update_attributes(params[:transaction])
       flash[:notice] = "Expense edited successfully."
     end
@@ -130,7 +130,7 @@ class FinanceController < ApplicationController
   def income_edit
     @transaction = FinanceTransaction.find(params[:id])
     @transaction.user_id = @current_user.id
-    @categories = FinanceTransactionCategory.all(:conditions => 'is_income=true and id != 2 and id != 3' )
+    @categories = FinanceTransactionCategory.all(:conditions => "is_income=true and name NOT IN ('Fee','Salary','Donation','Library','Hostel','Transport')")
     if request.post? and @transaction.update_attributes(params[:transaction])
       flash[:notice] = "Income edited successfully."
       redirect_to :action=> 'income_list'
@@ -155,7 +155,7 @@ class FinanceController < ApplicationController
       redirect_to :action=>'expense_list'
     end
 
-   
+
   end
 
   def income_list_update
@@ -224,7 +224,7 @@ class FinanceController < ApplicationController
 
   def transaction_trigger_edit
     @transaction_trigger = FinanceTransactionTrigger.find(params[:id])
-    @categories = FinanceTransactionCategory.find(:all ,:conditions => ["id != 1 and id != 3 "])
+    @categories = FinanceTransactionCategory.find(:all ,:conditions => "name NOT IN ('Salary','Fee','Transport','Library','Hostel')")
   end
 
   def transaction_trigger_update
@@ -250,43 +250,38 @@ class FinanceController < ApplicationController
 
   
   def update_monthly_report
+    fixed_category_name
     @hr = Configuration.find_by_config_value("HR")
     @start_date = (params[:start_date]).to_date
     @end_date = (params[:end_date]).to_date
     @transactions = FinanceTransaction.find(:all,
       :order => 'transaction_date desc', :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'"])
     #@other_transactions = FinanceTransaction.report(@start_date,@end_date,params[:page])
-    @other_transactions = FinanceTransaction.find(:all,params[:page], :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'and category_id !='#{3}' and category_id !='#{2}'and category_id !='#{1}'"],
+    @other_transactions = FinanceTransaction.find(:all,params[:page], :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'and category_id NOT IN (#{@fixed_cat_ids.join(",")})"],
       :order => 'transaction_date')
     @transactions_fees = FinanceTransaction.total_fees(@start_date,@end_date)
     @salary = MonthlyPayslip.total_employees_salary(@start_date, @end_date)#Employee.total_employees_salary(employees, @start_date, @end_date)
     @donations_total = FinanceTransaction.donations_triggers(@start_date,@end_date)
-    @batchs = Batch.find(:all)
     @grand_total = FinanceTransaction.grand_total(@start_date,@end_date)
     @graph = open_flash_chart_object(960, 500, "graph_for_update_monthly_report?start_date=#{@start_date}&end_date=#{@end_date}")
   end
   
   def transaction_pdf
+    fixed_category_name
     @currency_type = Configuration.find_by_config_key("CurrencyType").config_value
     @hr = Configuration.find_by_config_value("HR")
     @start_date = (params[:start_date]).to_date
     @end_date = (params[:end_date]).to_date
     @transactions = FinanceTransaction.find(:all,
       :order => 'transaction_date desc', :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'"])
-    @other_transactions = FinanceTransaction.find(:all, :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'and category_id !='#{3}' and category_id !='#{2}'and category_id !='#{1}'"],
+    @other_transactions = FinanceTransaction.find(:all,params[:page], :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'and category_id NOT IN (#{@fixed_cat_ids.join(",")})"],
       :order => 'transaction_date')
     @transactions_fees = FinanceTransaction.total_fees(@start_date,@end_date)
     employees = Employee.find(:all)
     @salary = Employee.total_employees_salary(employees, @start_date, @end_date)
     @donations_total = FinanceTransaction.donations_triggers(@start_date,@end_date)
-    @batchs = Batch.find(:all)
     @grand_total = FinanceTransaction.grand_total(@start_date,@end_date)
-    render :pdf => 'transaction_pdf'
-           
-    #        respond_to do |format|
-    #            format.pdf { render :layout => false }
-    #        end
-
+    render :pdf => 'transaction_pdf'        
   end
 
   def salary_department
@@ -321,7 +316,7 @@ class FinanceController < ApplicationController
 
   def donations_report
     month_date
-    @donations = FinanceTransaction.find(:all,:order => 'transaction_date desc', :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'and category_id ='#{2}'"])
+    @donations = FinanceTransaction.find(:all,:order => 'transaction_date desc', :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'and category_name ='Donation'"])
     
   end
 
@@ -1572,6 +1567,7 @@ class FinanceController < ApplicationController
   end
 
   def report_compare
+    fixed_category_name
     @hr = Configuration.find_by_config_value("HR")
     @start_date = (params[:start_date]).to_date
     @end_date = (params[:end_date]).to_date + 1
@@ -1581,10 +1577,10 @@ class FinanceController < ApplicationController
       :order => 'transaction_date desc', :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'"])
     @transactions2 = FinanceTransaction.find(:all,
       :order => 'transaction_date desc', :conditions => ["transaction_date >= '#{@start_date2}' and transaction_date <= '#{@end_date2}'"])
-    @other_transactions = FinanceTransaction.find(:all, :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'and category_id !='#{3}' and category_id !='#{2}'and category_id !='#{1}'"],
+    @other_transactions = FinanceTransaction.find(:all,params[:page], :conditions => ["transaction_date >= '#{@start_date}' and transaction_date <= '#{@end_date}'and category_id NOT IN (#{@fixed_cat_ids.join(",")})"],
       :order => 'transaction_date')
     #    @other_transactions = FinanceTransaction.report(@start_date,@end_date,params[:page])
-    @other_transactions2 = FinanceTransaction.find(:all, :conditions => ["transaction_date >= '#{@start_date2}' and transaction_date <= '#{@end_date2}'and category_id !='#{3}' and category_id !='#{2}'and category_id !='#{1}'"],
+    @other_transactions2 = FinanceTransaction.find(:all,params[:page], :conditions => ["transaction_date >= '#{@start_date2}' and transaction_date <= '#{@end_date2}'and category_id NOT IN (#{@fixed_cat_ids.join(",")})"],
       :order => 'transaction_date')
     #    @transactions_fees = FinanceTransaction.total_fees(@start_date,@end_date)
     @transactions_fees2 = FinanceTransaction.total_fees(@start_date2,@end_date2)
@@ -1985,7 +1981,7 @@ class FinanceController < ApplicationController
  
    
   end
-
+  #fee Discount
   def fee_discounts
     @batches = Batch.active
   end
@@ -2162,5 +2158,9 @@ class FinanceController < ApplicationController
     @particulars = @fee_collection.fee_collection_particulars
     @discounts = @fee_collection.fee_collection_discounts
   end
-  
+
+  def fixed_category_name
+    @cat_names = ['Fee','Salary','Donation','Library','Hostel','Transport']
+    @fixed_cat_ids = FinanceTransactionCategory.find(:all,:conditions=>{:name=>@cat_names}).collect(&:id)
+  end
 end
