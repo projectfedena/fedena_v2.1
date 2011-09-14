@@ -322,16 +322,16 @@ class FinanceController < ApplicationController
 
   def fees_report
     month_date
-    #@fees = FinanceTransaction.find(:all,:order => 'created_at desc', :conditions => ["created_at >= '#{@start_date}' and created_at <= '#{@last_date}'and category_id ='#{3}'"])
-    @batchs = Batch.find(:all)
+    fees_id = FinanceTransactionCategory.find_by_name('Fee').id
+    @fee_collection = FinanceFeeCollection.find(:all,:joins=>"INNER JOIN finance_fees ON finance_fees.fee_collection_id = finance_fee_collections.id INNER JOIN finance_transactions ON finance_transactions.finance_id = finance_fees.id and finance_transactions.transaction_date >= '#{@start_date}' AND finance_transactions.transaction_date <= '#{@end_date}'and finance_transactions.category_id ='#{fees_id}'",:group=>"finance_fee_collections.id")
+    
   end
 
   def batch_fees_report
     month_date
     @fee_collection = FinanceFeeCollection.find(params[:id])
-    @batch = Batch.find(@fee_collection.batch.id)
-    @sids = @batch.students(&:id)
-    @fees = FinanceFee.find_all_by_fee_collection_id(@fee_collection.id)
+    @batch = @fee_collection.batch
+    @transaction = @fee_collection.finance_transactions(:conditions=>"transaction_date >= '#{@start_date}' AND transaction_date <= '#{@end_date}'")
   end
 
   def student_fees_structure
@@ -1176,11 +1176,11 @@ class FinanceController < ApplicationController
       transaction = FinanceTransaction.new
       (total_fees > params[:fees][:fees_paid].to_f ) ? transaction.title = "Receipt No. (partial) F#{@financefee.id}" :  transaction.title = "Receipt No. F#{@financefee.id}"
       transaction.category = FinanceTransactionCategory.find_by_name("Fee")
-      transaction.student_id = params[:student]
+      transaction.payee = @student
       transaction.amount = params[:fees][:fees_paid].to_f
       transaction.fine_amount = params[:fine].to_f
       transaction.fine_included = true  unless params[:fine].nil?
-      transaction.finance_fees_id = @financefee.id
+      transaction.finance = @financefee
       transaction.transaction_date = Date.today
       transaction.save
       unless @financefee.transaction_id.nil?
@@ -1375,8 +1375,8 @@ class FinanceController < ApplicationController
         transaction = FinanceTransaction.new
         transaction.title = "Recipit No. F#{@financefee.id}"
         transaction.category = FinanceTransactionCategory.find_by_name("Fee")
-        transaction.student_id = params[:student]
-        transaction.finance_fees_id = @financefee.id
+        transaction.payee = @student
+        transaction.finance = @financefee
         transaction.fine_included = true  unless params[:fine].nil?
         transaction.amount = params[:fees][:fees_paid].to_f
         transaction.user_id = @current_user.id
@@ -1519,8 +1519,8 @@ class FinanceController < ApplicationController
         transaction = FinanceTransaction.new
         transaction.title = "Recipit No. F#{@financefee.id}"
         transaction.category = FinanceTransactionCategory.find_by_name("Fee")
-        transaction.student_id = params[:student]
-        transaction.finance_fees_id = @financefee.id
+        transaction.payee = @student
+        transaction.finance = @financefee
         transaction.amount = params[:fees][:fees_paid].to_f
         transaction.fine_included = true  unless @fine.nil?
         transaction.fine_amount = params[:fine].to_f

@@ -176,7 +176,12 @@ class FinanceTransaction < ActiveRecord::Base
     end
   end
 
- 
+  def student_payee
+    stu = self.payee
+    stu ||= ArchivedStudent.find_by_former_id(self.payee.id)
+  end
+
+
   def delete_auto_transaction
     FinanceTransaction.find_all_by_master_transaction_id(self.id).each do |f|
         f.destroy

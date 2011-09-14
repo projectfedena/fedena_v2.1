@@ -32,6 +32,7 @@ class Employee < ActiveRecord::Base
   has_many    :apply_leaves
   has_many    :monthly_payslips
   has_many    :employee_salary_structures
+  has_many    :finance_transactions, :as => :payee
 
   validates_format_of     :email, :with => /^[A-Z0-9._%-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i,   :allow_blank=>true,
     :message => "must be a valid email address"
