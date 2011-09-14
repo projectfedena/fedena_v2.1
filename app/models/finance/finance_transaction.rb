@@ -19,7 +19,7 @@
 class FinanceTransaction < ActiveRecord::Base
   belongs_to :category, :class_name => 'FinanceTransactionCategory', :foreign_key => 'category_id'
   belongs_to :student
-  belongs_to :fees, :polymorphic => true
+  belongs_to :finance, :polymorphic => true
   belongs_to :payee, :polymorphic => true
   cattr_reader :per_page
   validates_presence_of :title,:amount,:transaction_date
@@ -176,7 +176,7 @@ class FinanceTransaction < ActiveRecord::Base
     end
   end
 
-
+ 
   def delete_auto_transaction
     FinanceTransaction.find_all_by_master_transaction_id(self.id).each do |f|
         f.destroy
