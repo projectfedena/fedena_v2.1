@@ -43,7 +43,6 @@
             <% student = f.student_payee %>
               <div class="fees-table-description"><%= "#{student.full_name}- (#{student.batch.full_name})" %></div>
               <div class="fees-table-income"> <%= f.amount %> </div>
-              <div class="fees-table-receipt-no"> <%= f.receipt_no %> </div>
               <div class="fees-table-date"> <%= f.transaction_date.strftime("%m-%d-%Y") %> </div>
             </div>
             <% total += f.amount %>

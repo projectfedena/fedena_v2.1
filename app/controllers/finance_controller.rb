@@ -1266,23 +1266,22 @@ class FinanceController < ApplicationController
     unless params[:fine].nil?
       total_fees += params[:fine].to_f
     end
-    unless params[:fees][:fees_paid].to_f < 0
-      unless params[:fees][:fees_paid].to_f > params[:total_fees].to_f
-        transaction = FinanceTransaction.new
-        (total_fees > params[:fees][:fees_paid].to_f ) ? transaction.title = "#{t('receipt_no')}. (#{t('partial')}) F#{@financefee.id}" :  transaction.title = "#{t('receipt_no')}. F#{@financefee.id}"
-        transaction.category = FinanceTransactionCategory.find_by_name("Fee")
-        transaction.payee = @student
-        transaction.amount = params[:fees][:fees_paid].to_f
-        transaction.fine_amount = params[:fine].to_f
-        transaction.fine_included = true  unless params[:fine].nil?
-        transaction.finance = @financefee
-        transaction.transaction_date = Date.today
-        transaction.save
-        unless @financefee.transaction_id.nil?
-          tid =   @financefee.transaction_id + ",#{transaction.id}"
-        else
-          tid=transaction.id
-        end
+    unless params[:fees][:fees_paid].to_f > params[:total_fees].to_f
+      transaction = FinanceTransaction.new
+      (total_fees > params[:fees][:fees_paid].to_f ) ? transaction.title = "Receipt No. (partial) F#{@financefee.id}" :  transaction.title = "Receipt No. F#{@financefee.id}"
+      transaction.category = FinanceTransactionCategory.find_by_name("Fee")
+      transaction.payee = @student
+      transaction.amount = params[:fees][:fees_paid].to_f
+      transaction.fine_amount = params[:fine].to_f
+      transaction.fine_included = true  unless params[:fine].nil?
+      transaction.finance = @financefee
+      transaction.transaction_date = Date.today
+      transaction.save
+      unless @financefee.transaction_id.nil?
+        tid =   @financefee.transaction_id + ",#{transaction.id}"
+      else
+        tid=transaction.id
+      end
 
         is_paid = (params[:fees][:fees_paid].to_f == params[:total_fees].to_f) ? true : false
         @financefee.update_attributes(:transaction_id=>tid, :is_paid=>is_paid)
@@ -1477,26 +1476,20 @@ class FinanceController < ApplicationController
     end
   
     if request.post?
-      unless params[:fees][:fees_paid].to_f < 0
-        unless params[:fees][:fees_paid].to_f> params[:total_fees].to_f
-          transaction = FinanceTransaction.new
-          transaction.title = "#{t('receipt_no')}. F#{@financefee.id}"
-          transaction.category = FinanceTransactionCategory.find_by_name("Fee")
-          transaction.payee = @student
-          transaction.finance = @financefee
-          transaction.fine_included = true  unless params[:fine].nil?
-          transaction.amount = params[:fees][:fees_paid].to_f
-          transaction.fine_amount = params[:fine].to_f
-          transaction.transaction_date = Date.today
-          transaction.save
-          unless @financefee.transaction_id.nil?
-            tid =   @financefee.transaction_id.to_s + ",#{transaction.id}"
-          else
-            tid=transaction.id
-          end
-          is_paid = (params[:fees][:fees_paid].to_f == params[:total_fees].to_f) ? true : false
-          @financefee.update_attributes(:transaction_id=>tid, :is_paid=>is_paid)
-          flash[:notice] = "#{t('flash14')}"
+      unless params[:fees][:fees_paid].to_f> params[:total_fees].to_f
+        transaction = FinanceTransaction.new
+        transaction.title = "Recipit No. F#{@financefee.id}"
+        transaction.category = FinanceTransactionCategory.find_by_name("Fee")
+        transaction.payee = @student
+        transaction.finance = @financefee
+        transaction.fine_included = true  unless params[:fine].nil?
+        transaction.amount = params[:fees][:fees_paid].to_f
+        transaction.user_id = @current_user.id
+        transaction.fine_amount = params[:fine].to_f
+        transaction.transaction_date = Date.today
+        transaction.save
+        unless @financefee.transaction_id.nil?
+          tid =   @financefee.transaction_id.to_s + ",#{transaction.id}"
         else
           flash[:notice] = "#{t('flash19')}"
         end
@@ -1633,24 +1626,17 @@ class FinanceController < ApplicationController
     total_fees += @fine unless @fine.nil?
 
     if request.post?
-      unless params[:fees][:fees_paid].to_f < 0
-        unless params[:fees][:fees_paid].to_f> params[:total_fees].to_f
-          transaction = FinanceTransaction.new
-          transaction.title = "#{t('receipt_no')}. F#{@financefee.id}"
-          transaction.category = FinanceTransactionCategory.find_by_name("Fee")
-          transaction.payee = @student
-          transaction.finance = @financefee
-          transaction.amount = params[:fees][:fees_paid].to_f
-          transaction.fine_included = true  unless @fine.nil?
-          transaction.fine_amount = params[:fine].to_f
-          transaction.transaction_date = Date.today
-          transaction.save
-
-          unless @financefee.transaction_id.nil?
-            tid =   @financefee.transaction_id.to_s + ",#{transaction.id}"
-          else
-            tid=transaction.id
-          end
+      unless params[:fees][:fees_paid].to_f> params[:total_fees].to_f
+        transaction = FinanceTransaction.new
+        transaction.title = "Recipit No. F#{@financefee.id}"
+        transaction.category = FinanceTransactionCategory.find_by_name("Fee")
+        transaction.payee = @student
+        transaction.finance = @financefee
+        transaction.amount = params[:fees][:fees_paid].to_f
+        transaction.fine_included = true  unless @fine.nil?
+        transaction.fine_amount = params[:fine].to_f
+        transaction.transaction_date = Date.today
+        transaction.save
 
           is_paid = (params[:fees][:fees_paid].to_f == params[:total_fees].to_f) ? true : false
           @financefee.update_attributes(:transaction_id=>tid, :is_paid=>is_paid)
