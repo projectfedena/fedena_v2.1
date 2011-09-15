@@ -961,7 +961,7 @@ class FinanceController < ApplicationController
         @particulars = FeeCollectionParticular.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}' "])
         page.replace_html 'form-errors', :text => ''
         page << "Modalbox.hide();"
-        page.replace_html 'particular-box', :partial => 'additional_particulars_list'
+        page.replace_html 'particulars', :partial => 'additional_particulars_list'
       else
         page.replace_html 'form-errors', :partial => 'class_timings/errors', :object => @finance_fee_particulars
         page.visual_effect(:highlight, 'form-errors')
@@ -975,6 +975,9 @@ class FinanceController < ApplicationController
     @collection_date = @finance_fee_particulars.finance_fee_collection
     @additional_category =@collection_date.fee_category
     @particulars = FeeCollectionParticular.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and finance_fee_collection_id = '#{@collection_date.id}' "])
+    render :update do |page|
+    page.replace_html 'particulars', :partial => 'additional_particulars_list'
+    end
   end
 
   def fee_collection_batch_update
