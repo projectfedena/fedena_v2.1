@@ -143,7 +143,7 @@ class ReminderController < ApplicationController
     user = current_user
     @new_reminder = Reminder.find(params[:id2])
     Reminder.update(@new_reminder.id, :is_read => true)
-    @sender = User.find(@new_reminder.sender)
+    @sender = @new_reminder.user
 
     if request.post?
       unless params[:reminder][:body] == "" or params[:recipients] == ""

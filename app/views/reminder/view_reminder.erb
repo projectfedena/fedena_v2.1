@@ -41,7 +41,7 @@
   <% end %>
 
   <div id="reminder-body">
-    <div id="reminder-from">From: <%= @sender.full_name %></div>
+    <div id="reminder-from">From: <%= @sender.nil? ? "User Unavailable" : @sender.full_name %></div>
     <div id="reminder-date">Sent on: <%= @new_reminder.created_at.strftime("%A, %d %B, %Y") %></div>
     <div id="reminder-subject">Subject: <%= @new_reminder.subject %></div>
     <div id="reminder-message"><strong>Message:</strong><br /><br /><%=h @new_reminder.body %></div>
@@ -49,7 +49,7 @@
 
       <%= link_to_function "► Reply", :class=>'button' do |page|
         page.visual_effect :toggle_blind, "reply-form"
-      end %>
+      end  unless @sender.nil? %>
       
     </div>
     <div id="reply-form" style="display:none;">
