@@ -42,7 +42,7 @@
 
 .submit_button {
     margin-top:15px;
-    margin-left:205px;
+    margin-left:180px;
     padding: 7px 10px;
     color: #fff;
     background: #27292B;
@@ -70,7 +70,7 @@
 }
 
 .label-field-pair2 {
-    height : 70px;
+    height : 50px;
     width : 426px;
     padding-top: 3px;
 }
@@ -134,7 +134,7 @@
 
 .opt{
     margin-left:200px;
-    width:250px;
+    width:199px;
 }
 
 .each_batch{
@@ -180,7 +180,4 @@
     padding: 0;
     text-align: center;
     width: 142px;
-}
-table#listing td.col-4 {
-    width: 28%;
 }
