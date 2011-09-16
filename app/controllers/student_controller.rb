@@ -63,7 +63,7 @@ class StudentController < ApplicationController
           recipients = []
           message = "Student admission done. username is #{@student.admission_no} and password is #{@student.admission_no}123"
           if sms_setting.student_sms_active
-            recipients.push @student.phone2 unless @student.phone2.nil?
+            recipients.push @student.phone2 unless @student.phone2.blank?
           end
           unless recipients.empty?
             sms = SmsManager.new(message,recipients)
