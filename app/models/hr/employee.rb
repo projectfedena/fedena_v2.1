@@ -65,7 +65,7 @@ class Employee < ActiveRecord::Base
     else
       changes_to_be_checked = ['employee_number','first_name','last_name','email']
       check_changes = self.changed & changes_to_be_checked
-      self.user.role = "Employee"
+#      self.user.role ||= "Employee"
       unless check_changes.blank?
         self.user.username = self.employee_number if check_changes.include?('employee_number')
         self.user.first_name = self.first_name if check_changes.include?('first_name')
