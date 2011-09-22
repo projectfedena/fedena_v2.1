@@ -17,7 +17,7 @@
 #specific language governing permissions and limitations
 #under the License. -%>
 <% unless flash[:notice].nil? %>
-  <div id="errorExplanation" class="errorExplanation"><p><%= t('there_were_pblm') %></p><ul><li><%= flash[:notice] %></li></ul></div>
+  <div id="errorExplanation" class="errorExplanation"><p>There were problems with the following fields:</p><ul><li><%= flash[:notice] %></li></ul></div>
 <% end %>
 
 <%if @financefee.transaction_id.nil? and @fine.nil?%>
@@ -127,7 +127,7 @@
         <tr class="tr-blank"></tr>
         <tr class="tr-<%= cycle("odd","even") %>" cellpadding="1" cellspacing="1">
           <td class="col-1" ></td>
-          <td class="col-1" colspan="2" ><span><%= t('payment_done') %></span></td>
+          <td class="col-1" colspan="2" ><span>Payment Done</span></td>
         </tr>
 
         <% paid = 0 %>

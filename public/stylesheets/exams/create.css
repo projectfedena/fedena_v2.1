@@ -45,11 +45,3 @@
 div.fieldWithErrors{
     display: inline;
 }
-form.new_exam{
-    margin: 0 auto;
-    width: 500px;
-}
-.necessary-field {
-    color: red;
-    font-size: 1.1em;
-}
