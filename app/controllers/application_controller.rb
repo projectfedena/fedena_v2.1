@@ -130,14 +130,14 @@ class ApplicationController < ActionController::Base
   protected
   def login_required
     unless session[:user_id]
-      session[:back_url] = request.url
-      redirect_to '/'
+    session[:back_url] = request.url
+    redirect_to '/'
     end
   end
 
   def check_if_loggedin
     if session[:user_id]
-      redirect_to :controller => 'user', :action => 'dashboard'
+    redirect_to :controller => 'user', :action => 'dashboard'
     end
   end
 
