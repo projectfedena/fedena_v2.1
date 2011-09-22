@@ -24,7 +24,7 @@ class FinanceTransaction < ActiveRecord::Base
   cattr_reader :per_page
   validates_presence_of :title,:amount,:transaction_date
   validates_presence_of :category,:message=>'not specified.'
-  validates_numericality_of :amount
+  validates_numericality_of :amount, :greater_than_or_equal_to => 0, :message => 'must be positive'
 
   after_create  :create_auto_transaction
   after_update  :update_auto_transaction

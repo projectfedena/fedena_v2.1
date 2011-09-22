@@ -40,7 +40,7 @@
   <% end %>
 
   <% total_fees =0 %>
-  <%if @financefee.transaction_id.nil? %>
+  <%if @financefee.transaction_id.blank? and @fine.nil?%>
     <%= render :partial=> 'defaulters_fine_submission' %>
   <% end %>
   <% form_for :fees, :url => {:action => 'pay_fees_defaulters', :student => @student.id,:date => @date.id, :fine => @fine} do |form| %>
