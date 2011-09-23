@@ -29,6 +29,7 @@ class Exam < ActiveRecord::Base
 
   validates_presence_of :maximum_marks
   validates_presence_of :minimum_marks
+  validates_numericality_of :minimum_marks, :maximum_marks, :greater_than => 0
 
   has_many :exam_scores
   has_many :archived_exam_scores
