@@ -1384,11 +1384,8 @@ class EmployeeController < ApplicationController
     @net_deductionable_amount = @individual_category_deductionable + @deductionable_amount
 
     @net_amount = @net_non_deductionable_amount - @net_deductionable_amount
-    render :pdf => 'individual_payslip_pdf',
-      :margin => {    :top=> 10,
-      :bottom => 10,
-      :left=> 30,
-      :right => 30}
+    render :pdf => 'individual_payslip_pdf'
+    
 
     #    respond_to do |format|
     #      format.pdf { render :layout => false }
