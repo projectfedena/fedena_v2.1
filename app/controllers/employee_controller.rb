@@ -238,10 +238,10 @@ class EmployeeController < ApplicationController
       if employees.empty?
         AdditionalField.find(params[:id]).destroy
         @additional_details = AdditionalField.find(:all)
-        flash[:notice]=t('flash3')
+        flash[:notice]="Successfully deleted!"
         redirect_to :action => "add_additional_details"
       else
-        flash[:notice]=t('flash4')
+        flash[:notice]="Unable to delete!"
         redirect_to :action => "add_additional_details"
       end
     else

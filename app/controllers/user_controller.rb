@@ -19,7 +19,7 @@
 class UserController < ApplicationController
   layout :choose_layout
   before_filter :login_required, :except => [:forgot_password, :login, :set_new_password, :reset_password]
-  before_filter :only_admin_allowed, :only => [:edit, :create, :index, :edit_privilege, :user_change_password]
+  before_filter :only_admin_allowed, :only => [:edit, :create, :index, :edit_privilege, :user_change_password,:delete,:list_user,:all]
   before_filter :protect_user_data, :only => [:profile, :user_change_password]
   before_filter :check_if_loggedin, :only => [:login]
   #  filter_access_to :edit_privilege
@@ -149,11 +149,15 @@ class UserController < ApplicationController
   end
 
   def delete
-    @user = User.find_by_username(params[:id]).destroy
-    flash[:notice] = 'User account deleted!'
+    @user = User.find_by_username(params[:id],:conditions=>"admin = 1")
+    unless @user.nil?
+      if @user.employee_record.nil?
+        flash[:notice] = 'User account deleted!' if @user.destroy
+      end
+    end
     redirect_to :controller => 'user'
   end
-
+  
   def dashboard
     @user = current_user
     @config = Configuration.available_modules
@@ -227,7 +231,7 @@ class UserController < ApplicationController
   end
 
   def reset_password
-    user = User.find_by_reset_password_code(params[:id])
+    user = User.find_by_reset_password_code(params[:id],:conditions=>"reset_password_code IS NOT NULL")
     if user
       if user.reset_password_code_until > Time.now
         redirect_to :action => 'set_new_password', :id => user.reset_password_code
@@ -251,8 +255,10 @@ class UserController < ApplicationController
         #                       OR last_name LIKE \"#{params[:query]}%\"
         #                       OR (concat(first_name, \" \", last_name) LIKE \"#{params[:query]}%\"))",
         #                :order => "role_name asc,first_name asc") unless params[:query] == ''
-        @user = @user.sort_by { |u1| [u1.role_name,u1.full_name] }
+      else
+        @user = User.first_name_or_last_name_or_username_equals_with params[:query].split
       end
+      @user = @user.sort_by { |u1| [u1.role_name,u1.full_name] } unless @user.nil?
     else
       @user = ''
     end
@@ -261,7 +267,7 @@ class UserController < ApplicationController
 
   def set_new_password
     if request.post?
-      user = User.find_by_reset_password_code(params[:id])
+     user = User.find_by_reset_password_code(params[:id],:conditions=>"reset_password_code IS NOT NULL")
       if user
         if params[:set_new_password][:new_password] === params[:set_new_password][:confirm_password]
           user.password = params[:set_new_password][:new_password]

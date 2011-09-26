@@ -69,6 +69,9 @@ class PayrollController < ApplicationController
     else
       redirect_to :action => "add_category"
     end
+    else
+      redirect_to :action => "add_category"
+    end
   end
 
   def manage_payroll
