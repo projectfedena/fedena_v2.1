@@ -66,9 +66,6 @@ class FinanceController < ApplicationController
     @currency_type = Configuration.find_by_config_key("CurrencyType").config_value
     render :pdf => 'donation_receipt_pdf'
           
-    #        respond_to do |format|
-    #            format.pdf { render :layout => false }
-    #        end
   end
 
   def donors

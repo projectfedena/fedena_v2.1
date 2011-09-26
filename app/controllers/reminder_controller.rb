@@ -106,10 +106,14 @@ class ReminderController < ApplicationController
   end
 
   def update_recipient_list
+    if params[:recipients]
     recipients_array = params[:recipients].split(",").collect{ |s| s.to_i }
     @recipients = User.find(recipients_array)
     render :update do |page|
       page.replace_html 'recipient-list', :partial => 'recipient_list'
+    end
+    else
+    redirect_to :controller=>:user,:action=>:dashboard
     end
   end
 
@@ -172,6 +176,7 @@ class ReminderController < ApplicationController
   end
 
   def send_reminder
+    if params[:create_reminder]
     unless params[:create_reminder][:message] == "" or params[:create_reminder][:to] == ""
       Reminder.create(:sender=>params[:create_reminder][:from], :recipient=>params[:create_reminder][:to], :subject=>params[:create_reminder][:subject],
         :body=>params[:create_reminder][:message] , :is_read=>false, :is_deleted_by_sender=>false,:is_deleted_by_recipient=>false)
@@ -182,6 +187,9 @@ class ReminderController < ApplicationController
       render(:update) do |page|
         page.replace_html 'error-msg', :text=> '<p class="flash-msg">Please enter message and subject.</p>'
       end
+    end
+    else
+      redirect_to :controller=>:reminder
     end
   end
 end

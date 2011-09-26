@@ -17,6 +17,7 @@
 #limitations under the License.
 
 class ExamsController < ApplicationController
+  before_filter :login_required
   before_filter :query_data
   before_filter :protect_other_student_data
   before_filter :restrict_employees_from_exam

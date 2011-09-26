@@ -233,14 +233,18 @@ class EmployeeController < ApplicationController
     end
   end
   def delete_additional_details
-    employees = EmployeeAdditionalDetail.find(:all ,:conditions=>"additional_field_id = #{params[:id]}")
-    if employees.empty?
-      AdditionalField.find(params[:id]).destroy
-      @additional_details = AdditionalField.find(:all)
-      flash[:notice]="Successfully deleted!"
-      redirect_to :action => "add_additional_details"
+    if params[:id]
+      employees = EmployeeAdditionalDetail.find(:all ,:conditions=>"additional_field_id = #{params[:id]}")
+      if employees.empty?
+        AdditionalField.find(params[:id]).destroy
+        @additional_details = AdditionalField.find(:all)
+        flash[:notice]="Successfully deleted!"
+        redirect_to :action => "add_additional_details"
+      else
+        flash[:notice]="Unable to delete!"
+        redirect_to :action => "add_additional_details"
+      end
     else
-      flash[:notice]="Unable to delete!"
       redirect_to :action => "add_additional_details"
     end
   end
@@ -1617,7 +1621,7 @@ class EmployeeController < ApplicationController
         employee = ArchivedEmployee.find(s)
         @employees1.push employee
       end
-    else
+    elsif @employee_ids.present?
       @employee_ids.each do |s|
         employee = Employee.find(s)
         @employees1.push employee
@@ -1629,11 +1633,7 @@ class EmployeeController < ApplicationController
         end
       end
     end
-    render :pdf => 'advanced_search_pdf',
-      :margin => {    :top=> 10,
-      :bottom => 10,
-      :left=> 30,
-      :right => 30}
+    render :pdf => 'employee_advanced_search_pdf'
   end
 
 
