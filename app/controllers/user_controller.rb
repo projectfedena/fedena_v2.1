@@ -256,7 +256,7 @@ class UserController < ApplicationController
         #                       OR (concat(first_name, \" \", last_name) LIKE \"#{params[:query]}%\"))",
         #                :order => "role_name asc,first_name asc") unless params[:query] == ''
       else
-        @user = User.first_name_or_last_name_or_username_equals_with params[:query].split
+        @user = User.first_name_or_last_name_or_username_equals params[:query].split
       end
       @user = @user.sort_by { |u1| [u1.role_name,u1.full_name] } unless @user.nil?
     else
